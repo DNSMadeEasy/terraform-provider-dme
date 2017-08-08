@@ -165,6 +165,9 @@ func getAll(d *schema.ResourceData, cr map[string]interface{}) error {
 
 	if attr, ok := d.GetOk("name"); ok {
 		cr["name"] = attr.(string)
+	} else {
+		// DME requires name to be present in API
+		cr["name"] = ""
 	}
 	if attr, ok := d.GetOk("type"); ok {
 		cr["type"] = attr.(string)
