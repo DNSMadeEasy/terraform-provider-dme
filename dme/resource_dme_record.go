@@ -24,7 +24,8 @@ func resourceDMERecord() *schema.Resource {
 			},
 			"name": &schema.Schema{
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
+				Default:  "",
 			},
 			"type": &schema.Schema{
 				Type:     schema.TypeString,
@@ -162,10 +163,9 @@ func resourceDMERecordDelete(d *schema.ResourceData, meta interface{}) error {
 }
 
 func getAll(d *schema.ResourceData, cr map[string]interface{}) error {
+	attr := d.Get("name")
+	cr["name"] = attr.(string)
 
-	if attr, ok := d.GetOk("name"); ok {
-		cr["name"] = attr.(string)
-	}
 	if attr, ok := d.GetOk("type"); ok {
 		cr["type"] = attr.(string)
 	}

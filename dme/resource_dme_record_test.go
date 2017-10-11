@@ -44,6 +44,37 @@ func TestAccDMERecord_basic(t *testing.T) {
 	})
 }
 
+func TestAccDMERecord_tld(t *testing.T) {
+	var record dnsmadeeasy.Record
+	domainid := os.Getenv("DME_DOMAINID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckDMERecordDestroy,
+		Steps: []resource.TestStep{
+			resource.TestStep{
+				Config: fmt.Sprintf(testDMERecordConfigA_tld, domainid),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckDMERecordExists("dme_record.test", &record),
+					resource.TestCheckResourceAttr(
+						"dme_record.test", "domainid", domainid),
+					resource.TestCheckResourceAttr(
+						"dme_record.test", "name", ""),
+					resource.TestCheckResourceAttr(
+						"dme_record.test", "type", "A"),
+					resource.TestCheckResourceAttr(
+						"dme_record.test", "value", "1.1.1.2"),
+					resource.TestCheckResourceAttr(
+						"dme_record.test", "ttl", "2000"),
+					resource.TestCheckResourceAttr(
+						"dme_record.test", "gtdLocation", "DEFAULT"),
+				),
+			},
+		},
+	})
+}
+
 func TestAccDMERecordCName(t *testing.T) {
 	var record dnsmadeeasy.Record
 	domainid := os.Getenv("DME_DOMAINID")
@@ -397,6 +428,16 @@ resource "dme_record" "test" {
   name = "testa"
   type = "A"
   value = "1.1.1.1"
+  ttl = 2000
+  gtdLocation = "DEFAULT"
+}`
+
+const testDMERecordConfigA_tld = `
+resource "dme_record" "test" {
+  domainid = "%s"
+  name = ""
+  type = "A"
+  value = "1.1.1.2"
   ttl = 2000
   gtdLocation = "DEFAULT"
 }`
