@@ -391,6 +391,28 @@ func testAccCheckDMERecordExists(n string, record *dnsmadeeasy.Record) resource.
 	}
 }
 
+func TestAccTDMERecord_importBasic(t *testing.T) {
+	resourceName := "dme_record.test"
+	domainid := os.Getenv("DME_DOMAINID")
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckDMERecordDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: fmt.Sprintf(testDMERecordConfigA, domainid),
+			},
+			{
+				ResourceName:        resourceName,
+				ImportState:         true,
+				ImportStateIdPrefix: fmt.Sprintf("%s/", domainid),
+				ImportStateVerify:   true,
+			},
+		},
+	})
+}
+
 const testDMERecordConfigA = `
 resource "dme_record" "test" {
   domainid = "%s"

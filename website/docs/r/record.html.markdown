@@ -247,3 +247,24 @@ resource "dme_record" "testsrv" {
   ttl      = 1000
 }
 ```
+
+## Import
+
+DNSMadeEasy records can be imported using the domain ID and record ID of the
+record, separated by a "/". e.g.,
+
+```
+$ terraform import dme_record.foo 123123/45674567
+```
+
+In this example, `123123` is the domain ID and `45674567` is the record ID.
+
+The Record ID for a given record can be found using the DNSMadeEasy web control panel.
+
+1. Select the "DNS - Managed DNS" menu once logged into the web control panel
+2. Select a domain name
+3. Double click an A record
+4. Enable the check box for Dynamic DNS (if not already enabled)
+5. You can view the record ID here
+
+Source: https://support.dnsmadeeasy.com/index.php?/Knowledgebase/Article/View/17/2/what-is-my-record-id--ddns-id
