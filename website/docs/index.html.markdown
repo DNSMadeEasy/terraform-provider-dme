@@ -40,6 +40,6 @@ The following arguments are supported:
   the `DME_AKEY` shell environment variable.
 * `skey` - (Required) The DNSMadeEasy Secret key. This can also be specified
   with the `DME_SKEY` shell environment variable.
-* `usesandbox` - (Optional) If true, the DNSMadeEasy sandbox will be
+* `usesandbox` - (Required) If true, the DNSMadeEasy sandbox will be
   used. This can also be specified with the `DME_USESANDBOX` shell environment
   variable.
