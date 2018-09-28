@@ -33,8 +33,8 @@ The following arguments are supported:
 * `name` - (Required) The name of the record `type` - (Required) The type of
 * the record `value` - (Required) The value of the record; its usage
   will depend on the `type` (see below)
-* `ttl` - (Integer, Optional) The TTL of the record `gtdLocation` - (String,
-  Optional) The GTD Location of the record on Global Traffic Director enabled
+* `ttl` - (Integer, Optional) The TTL of the record 
+* `gtdLocation` - (String, Optional) The GTD Location of the record on Global Traffic Director enabled
   domains; Unless GTD is enabled this should either be omitted or set to
   "DEFAULT"
 
