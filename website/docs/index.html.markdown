@@ -3,45 +3,53 @@ layout: "dme"
 page_title: "Provider: DNSMadeEasy"
 sidebar_current: "docs-dme-index"
 description: |-
-  The DNSMadeEasy provider is used to interact with the resources supported by DNSMadeEasy. The provider needs to be configured with the proper credentials before it can be used.
+  The DNS made easy provider is used to manage various DNS Objects supported by DNS Made Easy platform. The provider needs to be configured with the proper credentials before it can be used.
 ---
+DME Provider
+------------
+DME is a leading DNS service provider with a feature rich DNS services which includes, various kinds of dns records such as Aname record, Cname record, HTTPredirection, MX record. The DME provider is used to manage various DNS Objects supported by DNS Made Easy platform. The provider needs to be configured with the proper credentials before it can be used.
 
-# DNSMadeEasy Provider
+Authentication
+--------------
+The Provider supports authentication with DME platform using API-key and SECRET-key. 
 
-~> **This provider is deprecated,** and the service it interacts with has been discontinued.
+ 1. Authentication with user-id and password.  
+ example:  
 
-The DNSMadeEasy provider is used to interact with the
-resources supported by DNSMadeEasy. The provider needs to be configured
-with the proper credentials before it can be used.
-
-Use the navigation to the left to read about the available resources.
-
-## Example Usage
-
-```hcl
-# Configure the DNSMadeEasy provider
+----------
+ ```hcl
 provider "dme" {
-  akey       = "${var.dme_akey}"
-  skey       = "${var.dme_skey}"
-  usesandbox = true
+  # dme Api key
+  api_key    = "apikey"
+  # dme secret key
+  secret_key = "secretkey"
+  insecure  = true
+  proxyurl = "https://proxy_server:proxy_port"
+}
+ ```
+
+Example Usage
+------------
+```hcl
+provider "dme" {
+  # dme Api key
+  api_key    = "apikey"
+  # dme secret key
+  secret_key = "secretkey"
+  insecure  = true
+  proxyurl = "https://proxy_server:proxy_port"
 }
 
-# Create an A record
-resource "dme_record" "www" {
-  domainid = "123456"
-
-  # ...
+resource "dme_domain" "domain1" {
+  name = "domain1.com"
 }
 ```
 
-## Argument Reference
+Argument Reference
+------------------
+Following arguments are supported with DNS Made Easy terraform provider.
 
-The following arguments are supported:
-
-* `akey` - (Required) The DNSMadeEasy API key. This can also be specified with
-  the `DME_AKEY` shell environment variable.
-* `skey` - (Required) The DNSMadeEasy Secret key. This can also be specified
-  with the `DME_SKEY` shell environment variable.
-* `usesandbox` - (Optional) If true, the DNSMadeEasy sandbox will be
-  used. This can also be specified with the `DME_USESANDBOX` shell environment
-  variable.
+ * `api_key` - (Required) API key of a user which has the access to perform CRUD operations on all the DNS objects of DNS Made Easy platform.
+ * `secret_key` - (Required) Secret key of a user which has the access to perform CRUD operations on all the DNS objects of DNS Made Easy platform.
+ * `insecure` - (Optional) This determines whether to use insecure HTTP connection or not. Default value is `true`.  
+ * `proxyurl` - (Optional) A proxy server URL when configured, all the requests to DNS Made Easy platform will be passed through the proxy-server configured.
