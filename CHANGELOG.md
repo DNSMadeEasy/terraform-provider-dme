@@ -1,4 +1,4 @@
-## 0.1.1 (Unreleased)
+## 0.1.1 (July 06, 2020)
 
 Recreated provider with Standard Implementation and tests.
 ## 0.1.0 (June 20, 2017)
