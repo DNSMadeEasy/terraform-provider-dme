@@ -1,26 +1,100 @@
 <% wrap_layout :inner do %>
     <% content_for :sidebar do %>
-        <div class="docs-sidebar hidden-print affix-top" role="complementary">
-            <ul class="nav docs-sidenav">
-                <li<%= sidebar_current("docs-home") %>>
-                <a href="/docs/providers/index.html">All Providers</a>
-                </li>
-
-                <li<%= sidebar_current("docs-dme-index") %>>
-                <a href="/docs/providers/dme/index.html">DNSMadeEasy Provider</a>
-                </li>
-
-                <li<%= sidebar_current("docs-dme-resource") %>>
-                <a href="#">Resources</a>
-                <ul class="nav nav-visible">
-                    <li<%= sidebar_current("docs-dme-resource-record") %>>
-                    <a href="/docs/providers/dme/r/record.html">dme_record</a>
+      <div class="docs-sidebar hidden-print affix-top" role="complementary">
+        <ul class="nav docs-sidenav">
+          <li<%= sidebar_current("docs-home") %>>
+          <a href="/docs/providers/index.html">All Providers</a>
+          </li>
+  
+          <li<%= sidebar_current("docs-dme-index") %>>
+          <a href="/docs/providers/dme/index.html">DME Provider</a>
+          </li>
+  
+          <li<%= sidebar_current("docs-dme-datasource") %>>
+          <a href="#">Data Resources</a>
+                  <ul class="nav nav-visible">
+                    <li<%= sidebar_current("docs-dme-datasource-dme_custom_soa_record") %>>
+                      <a href="/docs/providers/dme/d/soa_record.html">dme_custom_soa_record</a>
                     </li>
-                </ul>
-                </li>
-            </ul>
-        </div>
+                    <li<%= sidebar_current("docs-dme-datasource-dme_dns_record") %>>
+                      <a href="/docs/providers/dme/d/dns_record.html">dme_dns_record</a>
+                    </li>
+                    <li<%= sidebar_current("docs-dme-datasource-dme_domain") %>>
+                      <a href="/docs/providers/dme/d/domain.html">dme_domain</a>
+                    </li>
+                    <li<%= sidebar_current("docs-dme-datasource-dme_template") %>>
+                      <a href="/docs/providers/dme/d/template.html">dme_template</a>
+                    </li>
+                    <li<%= sidebar_current("docs-dme-datasource-dme_vanity_nameserver_record") %>>
+                      <a href="/docs/providers/dme/d/vanity_nameserver_record.html">dme_vanity_nameserver_record</a>
+                    </li>
+                    <li<%= sidebar_current("docs-dme-datasource-dme_transfer_acl") %>>
+                      <a href="/docs/providers/dme/d/acl.html">dme_transfer_acl</a>
+                    </li>
+                    <li<%= sidebar_current("docs-dme-datasource-dme_secondary_dns") %>>
+                      <a href="/docs/providers/dme/d/secondary_dns.html">dme_secondary_dns</a>
+                    </li>
+                    <li<%= sidebar_current("docs-dme-datasource-dme_secondary_ip_set") %>>
+                      <a href="/docs/providers/dme/d/secondary_ip_set.html">dme_secondary_ip_set</a>
+                    </li>
+                    <li<%= sidebar_current("docs-dme-datasource-dme_folder_record") %>>
+                      <a href="/docs/providers/dme/d/folder_record.html">folder_record</a>
+                    </li>
+                    <li<%= sidebar_current("docs-dme-datasource-dme_failover") %>>
+                    <a href="/docs/providers/dme/d/failover.html">dme_failover</a>
+                    </li>
+                    <li<%= sidebar_current("docs-dme-datasource-dme_template_record") %>>
+                      <a href="/docs/providers/dme/d/template_record.html">dme_template_record</a>
+                    </li>
+                    <li<%= sidebar_current("docs-dme-datasource-dme_contact_list") %>>
+                      <a href="/docs/providers/dme/d/contact_list.html">dme_contact_list</a>
+                    </li>
+                  </ul>
+          </li>
+          <li<%= sidebar_current("docs-dme-resource") %>>
+          <a href="#">Resources</a>
+                  <ul class="nav nav-visible">
+                    <li<%= sidebar_current("docs-dme-resource-dme_custom_soa_record") %>>
+                      <a href="/docs/providers/dme/r/soa_record.html">dme_custom_soa_record</a>
+                    </li>
+                    <li<%= sidebar_current("docs-dme-resource-dme_dns_record") %>>
+                      <a href="/docs/providers/dme/r/dns_record.html">dme_dns_record</a>
+                    </li>
+                    <li<%= sidebar_current("docs-dme-resource-dme_domain") %>>
+                      <a href="/docs/providers/dme/r/domain.html">dme_domain</a>
+                    </li>
+                    <li<%= sidebar_current("docs-dme-resource-dme_template") %>>
+                      <a href="/docs/providers/dme/r/template.html">dme_template</a>
+                    </li>
+                    <li<%= sidebar_current("docs-dme-resource-dme_vanity_nameserver_record") %>>
+                      <a href="/docs/providers/dme/r/vanity_nameserver_record.html">dme_vanity_nameserver_record</a>
+                    </li>
+                    <li<%= sidebar_current("docs-dme-resource-dme_transfer_acl") %>>
+                      <a href="/docs/providers/dme/r/acl.html">dme_transfer_acl</a>
+                    </li>
+                    <li<%= sidebar_current("docs-dme-resource-dme_secondary_dns") %>>
+                      <a href="/docs/providers/dme/r/secondary_dns.html">dme_secondary_dns</a>
+                    </li>
+                    <li<%= sidebar_current("docs-dme-resource-dme_secondary_ip_set") %>>
+                      <a href="/docs/providers/dme/r/secondary_ip_set.html">dme_secondary_ip_set</a>
+                    </li>
+                    <li<%= sidebar_current("docs-dme-resource-dme_failover") %>>
+                    <a href="/docs/providers/dme/r/failover.html">dme_failover</a>
+                    </li>
+                    <li<%= sidebar_current("docs-dme-resource-dme_folder_record") %>>
+                      <a href="/docs/providers/dme/r/folder_record.html">folder_record</a>
+                    </li>
+                    <li<%= sidebar_current("docs-dme-resource-dme_template_record") %>>
+                      <a href="/docs/providers/dme/r/template_record.html">dme_template_record</a>
+                    </li>
+                    <li<%= sidebar_current("docs-dme-resource-dme_contact_list") %>>
+                      <a href="/docs/providers/dme/r/contact_list.html">dme_contact_list</a>
+                    </li>
+                  </ul>
+          </li>
+        </ul>
+      </div>
     <% end %>
-
+  
     <%= yield %>
     <% end %>

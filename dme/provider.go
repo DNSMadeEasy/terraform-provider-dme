@@ -1,63 +1,113 @@
 package dme
 
 import (
-	"os"
+	"fmt"
 
-	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/hashicorp/terraform/terraform"
+	"github.com/DNSMadeEasy/dme-go-client/client"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 )
 
-// Provider provides a Provider...
 func Provider() terraform.ResourceProvider {
 	return &schema.Provider{
 		Schema: map[string]*schema.Schema{
-			"akey": &schema.Schema{
+			"api_key": &schema.Schema{
 				Type:        schema.TypeString,
 				Required:    true,
-				DefaultFunc: envDefaultFunc("DME_AKEY"),
-				Description: "A DNSMadeEasy API Key.",
+				Description: "API key for HTTP call",
+				DefaultFunc: schema.EnvDefaultFunc("apikey", nil),
 			},
-			"skey": &schema.Schema{
+
+			"secret_key": &schema.Schema{
 				Type:        schema.TypeString,
 				Required:    true,
-				DefaultFunc: envDefaultFunc("DME_SKEY"),
-				Description: "The Secret Key for API operations.",
+				Description: "Secret Key for HMAC",
+				DefaultFunc: schema.EnvDefaultFunc("secretkey", nil),
 			},
-			"usesandbox": &schema.Schema{
+
+			"insecure": &schema.Schema{
 				Type:        schema.TypeBool,
-				Required:    true,
-				DefaultFunc: envDefaultFunc("DME_USESANDBOX"),
-				Description: "If true, use the DME Sandbox.",
+				Optional:    true,
+				Description: "Allows insecure HTTTPS client",
+			},
+
+			"proxyurl": &schema.Schema{
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Proxy server URL",
 			},
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
-			"dme_record": resourceDMERecord(),
+			"dme_custom_soa_record":        resourceDmeCustomSoaRecord(),
+			"dme_domain":                   resourceDMEDomain(),
+			"dme_dns_record":               resourceManagedDNSRecordActions(),
+			"dme_template":                 resourceDMETemplate(),
+			"dme_vanity_nameserver_record": resourceDmeVanityNameserverRecord(),
+			"dme_transfer_acl":             resourceDMEACL(),
+			"dme_secondary_dns":            resourceDMESecondaryDNS(),
+			"dme_secondary_ip_set":         resourceDMESecondaryIPSet(),
+			"dme_failover":                 resourceDMEFailover(),
+			"dme_folder_record":            resourceDmeFolder(),
+			"dme_template_record":          resourceDMETemplateRecord(),
+			"dme_contact_list":             resourceDMEContactList(),
 		},
 
-		ConfigureFunc: providerConfigure,
+		DataSourcesMap: map[string]*schema.Resource{
+			"dme_custom_soa_record":        datasourceDmeCustomSoaRecord(),
+			"dme_domain":                   datasourceDMEDomain(),
+			"dme_dns_record":               datasourceManagedDNSRecordActions(),
+			"dme_template":                 datasourceDMETemplate(),
+			"dme_vanity_nameserver_record": datasourceDmeVanityNameserverRecord(),
+			"dme_transfer_acl":             datasourceDmeACL(),
+			"dme_secondary_dns":            datasourceDMESecondaryDNS(),
+			"dme_secondary_ip_set":         datasourceDMESecondaryIPSet(),
+			"dme_failover":                 datasourceDMEFailover(),
+			"dme_folder_record":            datasourceDmeFolder(),
+			"dme_template_record":          datasourceDMETemplateRecord(),
+			"dme_contact_list":             datasourceDMEContactList(),
+		},
+
+		ConfigureFunc: configureClient,
 	}
 }
 
-func envDefaultFunc(k string) schema.SchemaDefaultFunc {
-	return func() (interface{}, error) {
-		if v := os.Getenv(k); v != "" {
-			if v == "true" {
-				return true, nil
-			} else if v == "false" {
-				return false, nil
-			}
-			return v, nil
-		}
-		return nil, nil
+func configureClient(d *schema.ResourceData) (interface{}, error) {
+	config := config{
+		api_key:    d.Get("api_key").(string),
+		secret_key: d.Get("secret_key").(string),
+		insecure:   d.Get("insecure").(bool),
+		proxyurl:   d.Get("proxyurl").(string),
 	}
+
+	if err := config.Valid(); err != nil {
+		return nil, err
+	}
+	cli := config.getClient()
+
+	return cli, nil
 }
 
-func providerConfigure(d *schema.ResourceData) (interface{}, error) {
-	config := Config{
-		AKey:       d.Get("akey").(string),
-		SKey:       d.Get("skey").(string),
-		UseSandbox: d.Get("usesandbox").(bool),
+func (c config) Valid() error {
+
+	if c.api_key == "" {
+		return fmt.Errorf("API Key is required")
 	}
-	return config.Client()
+
+	if c.secret_key == "" {
+		return fmt.Errorf("secret key is required")
+	}
+	return nil
+}
+
+func (c config) getClient() interface{} {
+
+	return client.GetClient(c.api_key, c.secret_key)
+}
+
+type config struct {
+	api_key    string
+	secret_key string
+	insecure   bool
+	proxyurl   string
 }
