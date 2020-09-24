@@ -2,10 +2,10 @@ package dme
 
 import (
 	"fmt"
-
 	"github.com/DNSMadeEasy/dme-go-client/client"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"log"
 )
 
 func Provider() terraform.ResourceProvider {
@@ -29,6 +29,11 @@ func Provider() terraform.ResourceProvider {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Description: "Allows insecure HTTTPS client",
+			},
+			"sandbox": &schema.Schema{
+				Type:        schema.TypeBool,
+				Optional:    true,
+				Description: "Run agaist DNSME Sandbox site",
 			},
 
 			"proxyurl": &schema.Schema{
@@ -77,6 +82,7 @@ func configureClient(d *schema.ResourceData) (interface{}, error) {
 		api_key:    d.Get("api_key").(string),
 		secret_key: d.Get("secret_key").(string),
 		insecure:   d.Get("insecure").(bool),
+		sandbox:    d.Get("sandbox").(bool),
 		proxyurl:   d.Get("proxyurl").(string),
 	}
 
@@ -101,13 +107,14 @@ func (c config) Valid() error {
 }
 
 func (c config) getClient() interface{} {
-
-	return client.GetClient(c.api_key, c.secret_key)
+        // Added Optional values, they were not being passed on to the dme-go-client module
+	return client.GetClient(c.api_key, c.secret_key, client.Sandbox(c.sandbox), client.Insecure(c.insecure), client.ProxyUrl(c.proxyurl))
 }
 
 type config struct {
 	api_key    string
 	secret_key string
 	insecure   bool
+	sandbox    bool
 	proxyurl   string
 }
