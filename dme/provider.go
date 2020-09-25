@@ -5,7 +5,6 @@ import (
 	"github.com/DNSMadeEasy/dme-go-client/client"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
-	"log"
 )
 
 func Provider() terraform.ResourceProvider {
@@ -107,7 +106,7 @@ func (c config) Valid() error {
 }
 
 func (c config) getClient() interface{} {
-        // Added Optional values, they were not being passed on to the dme-go-client module
+	// Added Optional values, they were not being passed on to the dme-go-client module
 	return client.GetClient(c.api_key, c.secret_key, client.Sandbox(c.sandbox), client.Insecure(c.insecure), client.ProxyUrl(c.proxyurl))
 }
 
