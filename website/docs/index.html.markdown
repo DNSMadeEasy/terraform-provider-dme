@@ -25,6 +25,7 @@ provider "dme" {
   secret_key = "secretkey"
   insecure  = true
   proxyurl = "https://proxy_server:proxy_port"
+  sandbox  = false
 }
  ```
 
@@ -38,6 +39,7 @@ provider "dme" {
   secret_key = "secretkey"
   insecure  = true
   proxyurl = "https://proxy_server:proxy_port"
+  sandbox  = false
 }
 
 resource "dme_domain" "domain1" {
@@ -53,3 +55,4 @@ Following arguments are supported with DNS Made Easy terraform provider.
  * `secret_key` - (Required) Secret key of a user which has the access to perform CRUD operations on all the DNS objects of DNS Made Easy platform.
  * `insecure` - (Optional) This determines whether to use insecure HTTP connection or not. Default value is `true`.  
  * `proxyurl` - (Optional) A proxy server URL when configured, all the requests to DNS Made Easy platform will be passed through the proxy-server configured.
+ * `sandbox`  - (Optional) use DNS Madeeasy Sandbox Enviroment instead of production site

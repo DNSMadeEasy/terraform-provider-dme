@@ -1,6 +1,7 @@
 provider "dme" {
-  api_key    = ""
-  secret_key = ""
+  api_key    = "1"
+  secret_key = "2"
+  sandbox = true
 }
 
 # resource "dme_template_record" "record" {
