@@ -5,9 +5,9 @@ sidebar_current: "docs-dme-index"
 description: |-
   The DNS made easy provider is used to manage various DNS Objects supported by DNS Made Easy platform. The provider needs to be configured with the proper credentials before it can be used.
 ---
-DME Provider
+DNS Made Easy Provider
 ------------
-DME is a leading DNS service provider with a feature rich DNS services which includes, various kinds of dns records such as Aname record, Cname record, HTTPredirection, MX record. The DME provider is used to manage various DNS Objects supported by DNS Made Easy platform. The provider needs to be configured with the proper credentials before it can be used.
+DNS Made Easy is a leading DNS service provider with a feature rich DNS services which includes, various kinds of dns records such as Aname record, Cname record, HTTPredirection, MX record. The DME provider is used to manage various DNS Objects supported by DNS Made Easy platform. The provider needs to be configured with the proper credentials before it can be used.
 
 Authentication
 --------------
