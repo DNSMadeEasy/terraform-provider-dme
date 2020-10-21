@@ -1,5 +1,7 @@
 4d63.com/embedfiles v0.0.0-20190311033909-995e0740726f/go.mod h1:HxEsUxoVZyRxsZML/S6e2xAuieFMlGO0756ncWx1aXE=
 4d63.com/tz v1.1.0/go.mod h1:SHGqVdL7hd2ZaX2T9uEiOZ/OFAUfCCLURdLPJsd8ZNs=
+4d63.com/tz v1.2.0 h1:EpJt060xY+M+M0Wj8btz+THdOJbSxj4i8jhVQP3Wr0U=
+4d63.com/tz v1.2.0/go.mod h1:SHGqVdL7hd2ZaX2T9uEiOZ/OFAUfCCLURdLPJsd8ZNs=
 cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 cloud.google.com/go v0.34.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 cloud.google.com/go v0.38.0/go.mod h1:990N+gfupTy94rShfmMCWGDn0LpTmnzTp2qbd1dvSRU=
@@ -35,6 +37,8 @@ github.com/envoyproxy/protoc-gen-validate v0.1.0/go.mod h1:iSmxcyjqTsJpI2R4NaDN7
 github.com/eperry/dme-go-client v1.0.0/go.mod h1:ulD4SR2cwyTW6NjjZuX50qIF1KVW+t9kEpfJS6ivssk=
 github.com/eperry/dme-go-client v1.1.0 h1:XogLpsLtcn7f4jEz70AYx6/ofVp7wSlCAWrOAVwU2Gk=
 github.com/eperry/dme-go-client v1.1.0/go.mod h1:56AQ/fj2xxw47QjAyZ8Yg0ukmPBfIGccKMNloZXzsqk=
+github.com/eperry/dme-go-client v1.1.1 h1:R2P+9Eoh+LnlTF2bXLEiXjH3yOTmdV5zhJ3LM1ZFtTY=
+github.com/eperry/dme-go-client v1.1.1/go.mod h1:56AQ/fj2xxw47QjAyZ8Yg0ukmPBfIGccKMNloZXzsqk=
 github.com/fatih/color v1.7.0/go.mod h1:Zm6kSWBoL9eyXnKyktHP6abPY2pDugNf5KwzbycvMj4=
 github.com/go-test/deep v1.0.3/go.mod h1:wGDj63lr65AM2AQyKZd/NYHGb0R+1RLqB8NKt3aSFNA=
 github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b/go.mod h1:SBH7ygxi8pfUlaOkMMuAQtPIUF8ecWP5IEl/CR7VP2Q=
@@ -83,6 +87,8 @@ github.com/hashicorp/terraform-plugin-sdk v1.12.0/go.mod h1:HiWIPD/T9HixIhQUwaSo
 github.com/hashicorp/terraform-plugin-sdk v1.14.0/go.mod h1:t62Xy+m7Zjq5tA2vrs8Wuo/TQ0sc9Mx9MjXL3+7MHBQ=
 github.com/hashicorp/terraform-plugin-test v1.3.0/go.mod h1:QIJHYz8j+xJtdtLrFTlzQVC0ocr3rf/OjIpgZLK56Hs=
 github.com/hashicorp/terraform-svchost v0.0.0-20191011084731-65d371908596/go.mod h1:kNDNcF7sN4DocDLBkQYz73HGKwN1ANB1blq4lIYLYvg=
+github.com/hashicorp/terraform-website v1.0.0 h1:+ko2aW0qFkVnj+PEoavlQUnMM9morupnC22JRqENvis=
+github.com/hashicorp/terraform-website v1.0.0/go.mod h1:rn04psTMTGAMLFSdxkGQ3h5KUHVteSnW2L6OjV6h9Y4=
 github.com/hashicorp/yamux v0.0.0-20180604194846-3520598351bb/go.mod h1:+NfK9FKeTrX5uv1uIXGdwYDTeHna2qgaIlx54MXqjAM=
 github.com/hashicorp/yamux v0.0.0-20181012175058-2f1d1f20f75d/go.mod h1:+NfK9FKeTrX5uv1uIXGdwYDTeHna2qgaIlx54MXqjAM=
 github.com/jhump/protoreflect v1.6.0/go.mod h1:eaTn3RZAmMBcV0fifFvlm6VHNz3wSkYyXYWUh7ymB74=
