@@ -15,6 +15,14 @@ github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
 github.com/DNSMadeEasy/dme-go-client v1.0.0 h1:/KrLoPB6sz6PmwwakGY2G0ZLvwn06T01z7Af/CJfg7U=
 github.com/DNSMadeEasy/dme-go-client v1.0.0/go.mod h1:b/ChCh5HEYEdLo7z5eZALjsY6GG2m+BmI2ObROqBtYg=
+github.com/DNSMadeEasy/dme-go-client v1.0.1-0.20210310043709-85f8d68bbec2 h1:M7zzGHtCTL4iI673KxEnFz633pDnfjgtptrMz7JhWT0=
+github.com/DNSMadeEasy/dme-go-client v1.0.1-0.20210310043709-85f8d68bbec2/go.mod h1:b/ChCh5HEYEdLo7z5eZALjsY6GG2m+BmI2ObROqBtYg=
+github.com/DNSMadeEasy/dme-go-client v1.0.1-0.20210310060812-f19b470a2d89 h1:HHbijde+4BVIhLEtwusXWEdXm9O+Pay5z2diWjKCXUw=
+github.com/DNSMadeEasy/dme-go-client v1.0.1-0.20210310060812-f19b470a2d89/go.mod h1:b/ChCh5HEYEdLo7z5eZALjsY6GG2m+BmI2ObROqBtYg=
+github.com/DNSMadeEasy/dme-go-client v1.0.1-0.20210310061344-33a7abeeadd3 h1:fC6Ya1INddPVqgiXsWqIYqWjccQrGeyj4gNrvlosYJg=
+github.com/DNSMadeEasy/dme-go-client v1.0.1-0.20210310061344-33a7abeeadd3/go.mod h1:b/ChCh5HEYEdLo7z5eZALjsY6GG2m+BmI2ObROqBtYg=
+github.com/DNSMadeEasy/dme-go-client v1.0.1 h1:xyHq4yNzV998T0eIjPrL4GCn9BbotCNQjEDggkcHVwU=
+github.com/DNSMadeEasy/dme-go-client v1.0.1/go.mod h1:b/ChCh5HEYEdLo7z5eZALjsY6GG2m+BmI2ObROqBtYg=
 github.com/DNSMadeEasy/terraform-provider-dme v0.0.0-20200514070237-a1077782eb45 h1:GjJq5blkPuyaEHld5xNe57MrL2/uP5eatU824JKH0M0=
 github.com/DNSMadeEasy/terraform-provider-dme v0.0.0-20200514070237-a1077782eb45/go.mod h1:AMzczin20j0e8pGZwLNoLorxvOgVpKc0QsBt8jB8zq4=
 github.com/agext/levenshtein v1.2.1/go.mod h1:JEDfjyjHDjOF/1e4FlBE/PkbqA9OfWu2ki2W0IB5558=
