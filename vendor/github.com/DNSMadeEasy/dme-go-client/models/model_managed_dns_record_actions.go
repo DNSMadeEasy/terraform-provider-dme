@@ -5,7 +5,7 @@ import (
 )
 
 type ManagedDNSRecordActions struct {
-	Name           string `json:"name,omitempty"`
+	Name           string `json:"name"`
 	IdUpdate       string `json:"id,omitempty"`
 	Value          string `json:"value,omitempty"`
 	Type           string `json:"type,omitempty"`
@@ -32,6 +32,9 @@ func (record *ManagedDNSRecordActions) ToMap() map[string]interface{} {
 	log.Println("Inside model: recordmap values: ", recordMap)
 	log.Println("RECORD VAlues inside model: ", record)
 	A(recordMap, "name", record.Name)
+	if record.Name == "" {
+		recordMap["name"] = ""
+	}
 	A(recordMap, "id", record.IdUpdate)
 	A(recordMap, "value", record.Value)
 	A(recordMap, "type", record.Type)

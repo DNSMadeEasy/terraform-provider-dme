@@ -151,9 +151,10 @@ func resourceManagedDNSRecordActionsCreate(d *schema.ResourceData, m interface{}
 
 	recordAttr := models.ManagedDNSRecordActions{}
 
-	if name, ok := d.GetOk("name"); ok {
-		recordAttr.Name = name.(string)
-	}
+	recordAttr.Name = d.Get("name").(string)
+	// if name, ok := d.GetOk("name"); ok {
+	// 	recordAttr.Name = name.(string)
+	// }
 
 	if value, ok := d.GetOk("value"); ok {
 		recordAttr.Value = value.(string)
