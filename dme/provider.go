@@ -5,7 +5,6 @@ import (
 
 	"github.com/DNSMadeEasy/dme-go-client/client"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 )
 
@@ -106,8 +105,8 @@ func (c config) getClient() interface{} {
 }
 
 type config struct {
-	api_key       string
-	secret_key    string
-	insecure      bool
-	proxyurl      string
+	api_key    string
+	secret_key string
+	insecure   bool
+	proxyurl   string
 }
