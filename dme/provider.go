@@ -5,6 +5,7 @@ import (
 
 	"github.com/DNSMadeEasy/dme-go-client/client"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/validation"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 )
 
@@ -35,6 +36,12 @@ func Provider() terraform.ResourceProvider {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Proxy server URL",
+			},
+			"ratelimit_time": &schema.Schema{
+				Type:         schema.TypeInt,
+				Optional:     true,
+				ValidateFunc: validation.StringIsEmpty,
+				Description:  "attribute to store timestamp for first API call in rate limit window",
 			},
 		},
 
@@ -80,10 +87,16 @@ func configureClient(d *schema.ResourceData) (interface{}, error) {
 		proxyurl:   d.Get("proxyurl").(string),
 	}
 
+	if ratelimitTime, ok := d.GetOk("ratelimit_time"); ok {
+		config.ratelimitTime = ratelimitTime.(string)
+	}
+
 	if err := config.Valid(); err != nil {
 		return nil, err
 	}
+
 	cli := config.getClient()
+	d.Set("ratelimit_time", cli.(*client.Client).RatelimitTime)
 
 	return cli, nil
 }
@@ -106,8 +119,9 @@ func (c config) getClient() interface{} {
 }
 
 type config struct {
-	api_key    string
-	secret_key string
-	insecure   bool
-	proxyurl   string
+	api_key       string
+	secret_key    string
+	insecure      bool
+	proxyurl      string
+	ratelimitTime string
 }
