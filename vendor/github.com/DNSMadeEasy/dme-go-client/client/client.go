@@ -28,7 +28,6 @@ type Client struct {
 	secretKey     string //Required
 	insecure      bool   //Optional
 	proxyurl      string //Optional
-	RatelimitTime int64
 }
 
 //singleton implementation of a client

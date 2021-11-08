@@ -37,12 +37,6 @@ func Provider() terraform.ResourceProvider {
 				Optional:    true,
 				Description: "Proxy server URL",
 			},
-			"ratelimit_time": &schema.Schema{
-				Type:         schema.TypeInt,
-				Optional:     true,
-				ValidateFunc: validation.StringIsEmpty,
-				Description:  "attribute to store timestamp for first API call in rate limit window",
-			},
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
@@ -87,17 +81,10 @@ func configureClient(d *schema.ResourceData) (interface{}, error) {
 		proxyurl:   d.Get("proxyurl").(string),
 	}
 
-	if ratelimitTime, ok := d.GetOk("ratelimit_time"); ok {
-		config.ratelimitTime = ratelimitTime.(string)
-	}
-
 	if err := config.Valid(); err != nil {
 		return nil, err
 	}
-
 	cli := config.getClient()
-	d.Set("ratelimit_time", cli.(*client.Client).RatelimitTime)
-
 	return cli, nil
 }
 
@@ -123,5 +110,4 @@ type config struct {
 	secret_key    string
 	insecure      bool
 	proxyurl      string
-	ratelimitTime string
 }
