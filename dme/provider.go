@@ -84,7 +84,6 @@ func configureClient(d *schema.ResourceData) (interface{}, error) {
 		return nil, err
 	}
 	cli := config.getClient()
-
 	return cli, nil
 }
 
