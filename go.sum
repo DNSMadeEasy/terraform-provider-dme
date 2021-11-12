@@ -39,6 +39,8 @@ github.com/DNSMadeEasy/dme-go-client v1.0.8 h1:xG/aqXn6gvTnsROpa6PaF80SjPdFkZp3w
 github.com/DNSMadeEasy/dme-go-client v1.0.8/go.mod h1:b/ChCh5HEYEdLo7z5eZALjsY6GG2m+BmI2ObROqBtYg=
 github.com/DNSMadeEasy/dme-go-client v1.0.9 h1:cFvxG2O6ndnc7rhCWN5Ts50nT2202CkGSPdKbKg3DKA=
 github.com/DNSMadeEasy/dme-go-client v1.0.9/go.mod h1:b/ChCh5HEYEdLo7z5eZALjsY6GG2m+BmI2ObROqBtYg=
+github.com/DNSMadeEasy/dme-go-client v1.0.10 h1:8a1CIvY7xB7sge6vR0ZVUP0F1QfzLcaiWm57PlV384A=
+github.com/DNSMadeEasy/dme-go-client v1.0.10/go.mod h1:b/ChCh5HEYEdLo7z5eZALjsY6GG2m+BmI2ObROqBtYg=
 github.com/DNSMadeEasy/dme-go-client v1.10.10 h1:7kulZSN+J3oY/RjLzD7baD+/syNUETNmjXGpQo3ArpQ=
 github.com/DNSMadeEasy/dme-go-client v1.10.10/go.mod h1:b/ChCh5HEYEdLo7z5eZALjsY6GG2m+BmI2ObROqBtYg=
 github.com/DNSMadeEasy/dme-go-client v1.10.11 h1:xNU7qMTqB16riB3Vujf+QSd/o1mMwDwChU4+p572jd8=
