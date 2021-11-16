@@ -10,7 +10,7 @@ cloud.google.com/go/internal/optional
 cloud.google.com/go/internal/trace
 cloud.google.com/go/internal/version
 cloud.google.com/go/storage
-# github.com/DNSMadeEasy/dme-go-client v1.10.11
+# github.com/DNSMadeEasy/dme-go-client v1.0.10
 github.com/DNSMadeEasy/dme-go-client/client
 github.com/DNSMadeEasy/dme-go-client/container
 github.com/DNSMadeEasy/dme-go-client/models
@@ -141,8 +141,6 @@ github.com/hashicorp/terraform-plugin-sdk/helper/hashcode
 github.com/hashicorp/terraform-plugin-sdk/helper/logging
 github.com/hashicorp/terraform-plugin-sdk/helper/resource
 github.com/hashicorp/terraform-plugin-sdk/helper/schema
-github.com/hashicorp/terraform-plugin-sdk/helper/structure
-github.com/hashicorp/terraform-plugin-sdk/helper/validation
 github.com/hashicorp/terraform-plugin-sdk/httpclient
 github.com/hashicorp/terraform-plugin-sdk/internal/addrs
 github.com/hashicorp/terraform-plugin-sdk/internal/command/format

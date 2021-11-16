@@ -4,6 +4,6 @@ go 1.13
 
 require (
 	4d63.com/tz v1.2.0 // indirect
-	github.com/DNSMadeEasy/dme-go-client v1.10.11
+	github.com/DNSMadeEasy/dme-go-client v1.0.10
 	github.com/hashicorp/terraform-plugin-sdk v1.14.0
 )

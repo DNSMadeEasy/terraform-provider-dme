@@ -23,11 +23,11 @@ import (
 const BaseURL = "https://api.dnsmadeeasy.com/V2.0/"
 
 type Client struct {
-	httpclient    *http.Client
-	apiKey        string //Required
-	secretKey     string //Required
-	insecure      bool   //Optional
-	proxyurl      string //Optional
+	httpclient *http.Client
+	apiKey     string //Required
+	secretKey  string //Required
+	insecure   bool   //Optional
+	proxyurl   string //Optional
 }
 
 //singleton implementation of a client
@@ -109,15 +109,17 @@ func (c *Client) configProxy(transport *http.Transport) *http.Transport {
 }
 
 func (c *Client) Save(obj models.Model, endpoint string) (*container.Container, error) {
-	jsonPayload, err := c.PrepareModel(obj)
-	if err != nil {
-		return nil, err
-	}
-	log.Println("Payload is :", jsonPayload)
 
-	url := fmt.Sprintf("%s%s", BaseURL, endpoint)
 	var resp *http.Response
-	for true {
+	url := fmt.Sprintf("%s%s", BaseURL, endpoint)
+
+	for {
+		jsonPayload, err := c.PrepareModel(obj)
+		if err != nil {
+			return nil, err
+		}
+		log.Println("Payload is :", jsonPayload)
+
 		req, err := c.makeRequest("POST", url, jsonPayload)
 		if err != nil {
 			return nil, err
@@ -140,6 +142,9 @@ func (c *Client) Save(obj models.Model, endpoint string) (*container.Container, 
 	}
 
 	bodyBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
 	resp.Body.Close()
 	respObj, err := container.ParseJSON(bodyBytes)
 	if err != nil {
@@ -158,7 +163,7 @@ func (c *Client) GetbyId(endpoint string) (*container.Container, error) {
 
 	url := fmt.Sprintf("%s%s", BaseURL, endpoint)
 	var resp *http.Response
-	for true {
+	for {
 		req, err := c.makeRequest("GET", url, nil)
 		if err != nil {
 			return nil, err
@@ -166,8 +171,6 @@ func (c *Client) GetbyId(endpoint string) (*container.Container, error) {
 		log.Println("Request for get : ", req)
 
 		resp, err = c.httpclient.Do(req)
-		log.Println("response from get domain :", resp)
-
 		if err != nil {
 			log.Println("waiting until more API calls can be done")
 			sleepDuration := 5
@@ -182,6 +185,9 @@ func (c *Client) GetbyId(endpoint string) (*container.Container, error) {
 	}
 
 	bodyBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
 	resp.Body.Close()
 	respObj, err := container.ParseJSON(bodyBytes)
 	if err != nil {
@@ -197,13 +203,16 @@ func (c *Client) GetbyId(endpoint string) (*container.Container, error) {
 }
 
 func (c *Client) Update(obj models.Model, endpoint string) (*container.Container, error) {
-	jsonPayload, err := c.PrepareModel(obj)
-	if err != nil {
-		return nil, err
-	}
+
 	var resp *http.Response
 	url := fmt.Sprintf("%s%s", BaseURL, endpoint)
-	for true {
+
+	for {
+		jsonPayload, err := c.PrepareModel(obj)
+		if err != nil {
+			return nil, err
+		}
+
 		req, err := c.makeRequest("PUT", url, jsonPayload)
 		log.Println(req)
 		if err != nil {
@@ -248,9 +257,11 @@ func (c *Client) Update(obj models.Model, endpoint string) (*container.Container
 }
 
 func (c *Client) Delete(endpoint string) error {
+
 	url := fmt.Sprintf("%s%s", BaseURL, endpoint)
 	var resp *http.Response
-	for true {
+
+	for {
 		req, err := c.makeRequest("DELETE", url, nil)
 		if err != nil {
 			return err
@@ -273,6 +284,9 @@ func (c *Client) Delete(endpoint string) error {
 		return nil
 	}
 	bodyBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
 	resp.Body.Close()
 	respObj, err := container.ParseJSON(bodyBytes)
 	if err != nil {
@@ -291,7 +305,7 @@ func checkForErrors(resp *http.Response, obj *container.Container) error {
 	if resp.StatusCode != 200 && resp.StatusCode != 201 {
 		log.Println(" Into the check for errors ")
 		if resp.StatusCode == 404 {
-			return fmt.Errorf("Particular item not found")
+			return fmt.Errorf("particular item not found")
 		}
 
 		errs := obj.S("error").Data().([]interface{})
