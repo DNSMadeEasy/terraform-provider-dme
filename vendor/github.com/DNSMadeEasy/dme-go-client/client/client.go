@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"sync"
 	"time"
 
 	"4d63.com/tz"
@@ -30,8 +31,10 @@ type Client struct {
 	proxyurl   string //Optional
 }
 
-//singleton implementation of a client
-var clientImpl *Client
+var (
+	clientImpl *Client    //singleton implementation of a client
+	saveMutex  sync.Mutex //mutex for save method
+)
 
 //get first
 type Option func(*Client)
@@ -109,17 +112,16 @@ func (c *Client) configProxy(transport *http.Transport) *http.Transport {
 }
 
 func (c *Client) Save(obj models.Model, endpoint string) (*container.Container, error) {
+	saveMutex.Lock()
+	jsonPayload, err := c.PrepareModel(obj)
+	if err != nil {
+		return nil, err
+	}
+	log.Println("Payload is :", jsonPayload)
 
-	var resp *http.Response
 	url := fmt.Sprintf("%s%s", BaseURL, endpoint)
-
-	for {
-		jsonPayload, err := c.PrepareModel(obj)
-		if err != nil {
-			return nil, err
-		}
-		log.Println("Payload is :", jsonPayload)
-
+	var resp *http.Response
+	for true {
 		req, err := c.makeRequest("POST", url, jsonPayload)
 		if err != nil {
 			return nil, err
@@ -142,9 +144,6 @@ func (c *Client) Save(obj models.Model, endpoint string) (*container.Container, 
 	}
 
 	bodyBytes, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
 	resp.Body.Close()
 	respObj, err := container.ParseJSON(bodyBytes)
 	if err != nil {
@@ -156,6 +155,7 @@ func (c *Client) Save(obj models.Model, endpoint string) (*container.Container, 
 	if respErr != nil {
 		return nil, respErr
 	}
+	saveMutex.Unlock()
 	return respObj, nil
 }
 
@@ -163,7 +163,7 @@ func (c *Client) GetbyId(endpoint string) (*container.Container, error) {
 
 	url := fmt.Sprintf("%s%s", BaseURL, endpoint)
 	var resp *http.Response
-	for {
+	for true {
 		req, err := c.makeRequest("GET", url, nil)
 		if err != nil {
 			return nil, err
@@ -171,6 +171,8 @@ func (c *Client) GetbyId(endpoint string) (*container.Container, error) {
 		log.Println("Request for get : ", req)
 
 		resp, err = c.httpclient.Do(req)
+		log.Println("response from get domain :", resp)
+
 		if err != nil {
 			log.Println("waiting until more API calls can be done")
 			sleepDuration := 5
@@ -185,9 +187,6 @@ func (c *Client) GetbyId(endpoint string) (*container.Container, error) {
 	}
 
 	bodyBytes, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
 	resp.Body.Close()
 	respObj, err := container.ParseJSON(bodyBytes)
 	if err != nil {
@@ -203,16 +202,13 @@ func (c *Client) GetbyId(endpoint string) (*container.Container, error) {
 }
 
 func (c *Client) Update(obj models.Model, endpoint string) (*container.Container, error) {
-
+	jsonPayload, err := c.PrepareModel(obj)
+	if err != nil {
+		return nil, err
+	}
 	var resp *http.Response
 	url := fmt.Sprintf("%s%s", BaseURL, endpoint)
-
-	for {
-		jsonPayload, err := c.PrepareModel(obj)
-		if err != nil {
-			return nil, err
-		}
-
+	for true {
 		req, err := c.makeRequest("PUT", url, jsonPayload)
 		log.Println(req)
 		if err != nil {
@@ -257,11 +253,9 @@ func (c *Client) Update(obj models.Model, endpoint string) (*container.Container
 }
 
 func (c *Client) Delete(endpoint string) error {
-
 	url := fmt.Sprintf("%s%s", BaseURL, endpoint)
 	var resp *http.Response
-
-	for {
+	for true {
 		req, err := c.makeRequest("DELETE", url, nil)
 		if err != nil {
 			return err
@@ -284,9 +278,6 @@ func (c *Client) Delete(endpoint string) error {
 		return nil
 	}
 	bodyBytes, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return err
-	}
 	resp.Body.Close()
 	respObj, err := container.ParseJSON(bodyBytes)
 	if err != nil {
@@ -305,7 +296,7 @@ func checkForErrors(resp *http.Response, obj *container.Container) error {
 	if resp.StatusCode != 200 && resp.StatusCode != 201 {
 		log.Println(" Into the check for errors ")
 		if resp.StatusCode == 404 {
-			return fmt.Errorf("particular item not found")
+			return fmt.Errorf("Particular item not found")
 		}
 
 		errs := obj.S("error").Data().([]interface{})
