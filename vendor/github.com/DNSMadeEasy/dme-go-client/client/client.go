@@ -10,6 +10,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/http/httputil"
 	"net/url"
 	"strconv"
 	"sync"
@@ -22,6 +23,7 @@ import (
 )
 
 const BaseURL = "https://api.dnsmadeeasy.com/V2.0/"
+const SleepDuration = 5
 
 type Client struct {
 	httpclient *http.Client
@@ -29,12 +31,11 @@ type Client struct {
 	secretKey  string //Required
 	insecure   bool   //Optional
 	proxyurl   string //Optional
+	mutex      sync.Mutex
 }
 
-var (
-	clientImpl *Client    //singleton implementation of a client
-	mutex      sync.Mutex //mutex for save method
-)
+//singleton implementation of a client
+var clientImpl *Client
 
 //get first
 type Option func(*Client)
@@ -116,36 +117,19 @@ func (c *Client) Save(obj models.Model, endpoint string) (*container.Container, 
 	if err != nil {
 		return nil, err
 	}
-	log.Println("Payload is :", jsonPayload)
 
 	url := fmt.Sprintf("%s%s", BaseURL, endpoint)
-	var resp *http.Response
-	mutex.Lock()
-	defer mutex.Unlock()
-	for {
-		req, err := c.makeRequest("POST", url, jsonPayload)
-		if err != nil {
-			return nil, err
-		}
-		log.Println("Request made : ", req)
 
-		resp, err = c.httpclient.Do(req)
-		log.Println("Response is :", resp)
-		if err != nil {
-			log.Println("waiting until more API calls can be done")
-			sleepDuration := 5
-			time.Sleep(time.Duration(sleepDuration) * time.Second)
-		} else if requestsRemaining, _ := strconv.Atoi(resp.Header.Get("x-dnsme-requestsRemaining")); resp.StatusCode == 400 && requestsRemaining == 0 {
-			log.Println("waiting until more API calls can be done")
-			sleepDuration := 5
-			time.Sleep(time.Duration(sleepDuration) * time.Second)
-		} else {
-			break
-		}
+	resp, err := c.doRequestWithRateLimit("POST", url, jsonPayload)
+	if err != nil {
+		return nil, err
 	}
+	defer resp.Body.Close()
 
 	bodyBytes, err := ioutil.ReadAll(resp.Body)
-	resp.Body.Close()
+	if err != nil {
+		return nil, err
+	}
 	respObj, err := container.ParseJSON(bodyBytes)
 	if err != nil {
 		return nil, err
@@ -162,31 +146,11 @@ func (c *Client) Save(obj models.Model, endpoint string) (*container.Container, 
 func (c *Client) GetbyId(endpoint string) (*container.Container, error) {
 
 	url := fmt.Sprintf("%s%s", BaseURL, endpoint)
-	var resp *http.Response
-	mutex.Lock()
-	defer mutex.Unlock()
-	for {
-		req, err := c.makeRequest("GET", url, nil)
-		if err != nil {
-			return nil, err
-		}
-		log.Println("Request for get : ", req)
-
-		resp, err = c.httpclient.Do(req)
-		log.Println("response from get domain :", resp)
-
-		if err != nil {
-			log.Println("waiting until more API calls can be done")
-			sleepDuration := 5
-			time.Sleep(time.Duration(sleepDuration) * time.Second)
-		} else if requestsRemaining, _ := strconv.Atoi(resp.Header.Get("x-dnsme-requestsRemaining")); resp.StatusCode == 400 && requestsRemaining == 0 {
-			log.Println("waiting until more API calls can be done")
-			sleepDuration := 5
-			time.Sleep(time.Duration(sleepDuration) * time.Second)
-		} else {
-			break
-		}
+	resp, err := c.doRequestWithRateLimit("GET", url, nil)
+	if err != nil {
+		return nil, err
 	}
+	defer resp.Body.Close()
 
 	bodyBytes, err := ioutil.ReadAll(resp.Body)
 	resp.Body.Close()
@@ -208,31 +172,13 @@ func (c *Client) Update(obj models.Model, endpoint string) (*container.Container
 	if err != nil {
 		return nil, err
 	}
-	var resp *http.Response
 	url := fmt.Sprintf("%s%s", BaseURL, endpoint)
-	mutex.Lock()
-	defer mutex.Unlock()
-	for {
-		req, err := c.makeRequest("PUT", url, jsonPayload)
-		log.Println(req)
-		if err != nil {
-			return nil, err
-		}
 
-		resp, err = c.httpclient.Do(req)
-		log.Println("response for PUT: ", resp)
-		if err != nil {
-			log.Println("waiting until more API calls can be done")
-			sleepDuration := 5
-			time.Sleep(time.Duration(sleepDuration) * time.Second)
-		} else if requestsRemaining, _ := strconv.Atoi(resp.Header.Get("x-dnsme-requestsRemaining")); resp.StatusCode == 400 && requestsRemaining == 0 {
-			log.Println("waiting until more API calls can be done")
-			sleepDuration := 5
-			time.Sleep(time.Duration(sleepDuration) * time.Second)
-		} else {
-			break
-		}
+	resp, err := c.doRequestWithRateLimit("PUT", url, jsonPayload)
+	if err != nil {
+		return nil, err
 	}
+	defer resp.Body.Close()
 
 	if resp.StatusCode == 200 {
 		return nil, nil
@@ -259,27 +205,13 @@ func (c *Client) Update(obj models.Model, endpoint string) (*container.Container
 func (c *Client) Delete(endpoint string) error {
 	url := fmt.Sprintf("%s%s", BaseURL, endpoint)
 	var resp *http.Response
-	mutex.Lock()
-	defer mutex.Unlock()
-	for{
-		req, err := c.makeRequest("DELETE", url, nil)
-		if err != nil {
-			return err
-		}
 
-		resp, err = c.httpclient.Do(req)
-		if err != nil {
-			log.Println("waiting until more API calls can be done")
-			sleepDuration := 5
-			time.Sleep(time.Duration(sleepDuration) * time.Second)
-		} else if requestsRemaining, _ := strconv.Atoi(resp.Header.Get("x-dnsme-requestsRemaining")); resp.StatusCode == 400 && requestsRemaining == 0 {
-			log.Println("waiting until more API calls can be done")
-			sleepDuration := 5
-			time.Sleep(time.Duration(sleepDuration) * time.Second)
-		} else {
-			break
-		}
+	resp, err := c.doRequestWithRateLimit("DELETE", url, nil)
+	if err != nil {
+		return err
 	}
+	defer resp.Body.Close()
+
 	if resp.StatusCode == 200 {
 		return nil
 	}
@@ -341,6 +273,41 @@ func getToken(apikey, secretkey string) string {
 	return string(sha)
 }
 
+func (c *Client) doRequestWithRateLimit(method, endpoint string, con *container.Container) (*http.Response, error) {
+	var resp *http.Response
+	req, err := c.makeRequest(method, endpoint, con)
+	if err != nil {
+		return nil, err
+	}
+	c.mutex.Lock()
+	for {
+		hmac := getToken(c.apiKey, c.secretKey)
+		req.Header.Set("x-dnsme-hmac", hmac)
+
+		reqDump, err := httputil.DumpRequestOut(req, true)
+		if err != nil {
+			log.Println(err)
+		}
+		log.Printf("[DEBUG] \n--[ HTTP Request Sent]------------------------------------ \n %s\n---------------------------------------------\n", string(reqDump))
+
+		// DO
+		resp, err = c.httpclient.Do(req)
+		logRequest(req, resp)
+
+		// Retry If Rate Limit is reached
+		requestsRemaining, _ := strconv.Atoi(resp.Header.Get("x-dnsme-requestsRemaining"))
+		if (err != nil) || (resp.StatusCode == 400 || resp.StatusCode == 404) && requestsRemaining == 0 {
+			log.Println("waiting until more API calls can be done")
+			time.Sleep(time.Duration(SleepDuration) * time.Second)
+			time.Sleep(time.Duration(100) * time.Millisecond)
+			continue
+		}
+		break
+	}
+	c.mutex.Unlock()
+	return resp, nil
+}
+
 func (c *Client) makeRequest(method, endpoint string, con *container.Container) (*http.Request, error) {
 	var req *http.Request
 	var err error
@@ -364,4 +331,17 @@ func (c *Client) makeRequest(method, endpoint string, con *container.Container) 
 	req.Header.Set("x-dnsme-requestDate", time)
 
 	return req, nil
+}
+
+func logRequest(req *http.Request, resp *http.Response) {
+	reqDump, err := httputil.DumpRequestOut(req, true)
+	if err != nil {
+		log.Println(err)
+	}
+	respDump, err := httputil.DumpResponse(resp, true)
+	if err != nil {
+		log.Println(err)
+	}
+	log.Printf("[DEBUG] \n--[ HTTP Request ]------------------------------------ \n %s\n---------------------------------------------\n", string(reqDump))
+	log.Printf("[DEBUG] \n--[ HTTP Response ]----------------------------------- \n %s\n---------------------------------------------\n", string(respDump))
 }
