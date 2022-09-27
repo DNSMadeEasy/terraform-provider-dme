@@ -275,14 +275,12 @@ func getToken(apikey, secretkey string) string {
 
 func (c *Client) doRequestWithRateLimit(method, endpoint string, con *container.Container) (*http.Response, error) {
 	var resp *http.Response
-	req, err := c.makeRequest(method, endpoint, con)
-	if err != nil {
-		return nil, err
-	}
 	c.mutex.Lock()
 	for {
-		hmac := getToken(c.apiKey, c.secretKey)
-		req.Header.Set("x-dnsme-hmac", hmac)
+		req, err := c.makeRequest(method, endpoint, con)
+		if err != nil {
+			return nil, err
+		}
 
 		reqDump, err := httputil.DumpRequestOut(req, true)
 		if err != nil {
