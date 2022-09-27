@@ -22,6 +22,8 @@ import (
 	"github.com/DNSMadeEasy/dme-go-client/models"
 )
 
+var mutex sync.Mutex
+
 const BaseURL = "https://api.dnsmadeeasy.com/V2.0/"
 const SleepDuration = 5
 
@@ -31,7 +33,6 @@ type Client struct {
 	secretKey  string //Required
 	insecure   bool   //Optional
 	proxyurl   string //Optional
-	mutex      sync.Mutex
 }
 
 //singleton implementation of a client
@@ -275,7 +276,8 @@ func getToken(apikey, secretkey string) string {
 
 func (c *Client) doRequestWithRateLimit(method, endpoint string, con *container.Container) (*http.Response, error) {
 	var resp *http.Response
-	c.mutex.Lock()
+	mutex.Lock()
+	defer mutex.Unlock()
 	for {
 		req, err := c.makeRequest(method, endpoint, con)
 		if err != nil {
@@ -297,12 +299,11 @@ func (c *Client) doRequestWithRateLimit(method, endpoint string, con *container.
 		if (err != nil) || (resp.StatusCode == 400 || resp.StatusCode == 404) && requestsRemaining == 0 {
 			log.Println("waiting until more API calls can be done")
 			time.Sleep(time.Duration(SleepDuration) * time.Second)
-			time.Sleep(time.Duration(100) * time.Millisecond)
 			continue
 		}
+		time.Sleep(time.Duration(100) * time.Millisecond)
 		break
 	}
-	c.mutex.Unlock()
 	return resp, nil
 }
 
