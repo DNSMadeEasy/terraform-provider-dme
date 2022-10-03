@@ -10,7 +10,7 @@ cloud.google.com/go/internal/optional
 cloud.google.com/go/internal/trace
 cloud.google.com/go/internal/version
 cloud.google.com/go/storage
-# github.com/DNSMadeEasy/dme-go-client v1.0.10
+# github.com/DNSMadeEasy/dme-go-client v1.11.3
 github.com/DNSMadeEasy/dme-go-client/client
 github.com/DNSMadeEasy/dme-go-client/container
 github.com/DNSMadeEasy/dme-go-client/models
