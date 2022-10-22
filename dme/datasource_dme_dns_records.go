@@ -143,12 +143,13 @@ func datasourceManagedDNSRecordActionsRead(d *schema.ResourceData, m interface{}
 	name := d.Get("name").(string)
 	recordtype := d.Get("type").(string)
 
-	con, err := dmeClient.GetbyId("dns/managed/" + d.Get("domain_id").(string) + "/records")
+	con, err := dnsRecordsCache.getByDomain(dmeClient, d.Get("domain_id").(string))
 	if err != nil {
 		return err
 	}
 
-	data := con.S("data").Data().([]interface{})
+	data := con.Data().([]interface{})
+
 	var flag bool
 	var count int
 	for _, info := range data {
@@ -163,7 +164,7 @@ func datasourceManagedDNSRecordActionsRead(d *schema.ResourceData, m interface{}
 		return fmt.Errorf("Record of specified name not found")
 	}
 
-	cont1 := con.S("data").Index(count)
+	cont1 := con.Index(count)
 
 	d.SetId(fmt.Sprintf("%v", cont1.S("id").String()))
 	d.Set("name", StripQuotes(cont1.S("name").String()))

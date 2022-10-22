@@ -249,13 +249,13 @@ func resourceManagedDNSRecordActionsRead(d *schema.ResourceData, m interface{}) 
 	log.Println("andkamdak")
 	dnsId := d.Id()
 	log.Println("Inside read ID value: ", dnsId)
-	con, err := dmeClient.GetbyId("dns/managed/" + d.Get("domain_id").(string) + "/records?recordName=" + d.Get("name").(string) + "&type=" + d.Get("type").(string))
+	con, err := dnsRecordsCache.getByDomain(dmeClient, d.Get("domain_id").(string))
 	if err != nil {
 		return err
 	}
 	log.Println("Inside read method: ", con)
 
-	data := con.S("data").Data().([]interface{})
+	data := con.Data().([]interface{})
 	var count int
 	log.Println("data: ", data)
 
@@ -269,7 +269,7 @@ func resourceManagedDNSRecordActionsRead(d *schema.ResourceData, m interface{}) 
 		count = count + 1
 	}
 
-	cont1 := con.S("data").Index(count)
+	cont1 := con.Index(count)
 
 	d.SetId(fmt.Sprintf("%v", cont1.S("id").String()))
 
