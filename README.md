@@ -66,7 +66,7 @@ The `apikey` and `secretkey` can be sourced from the following Environment Varia
 ```
 terraform plan -parallelism=1
 terraform apply -parallelism=1
-```  
+```
 
 Developing The Provider
 -----------------------
