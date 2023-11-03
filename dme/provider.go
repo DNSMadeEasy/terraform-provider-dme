@@ -13,14 +13,14 @@ func Provider() terraform.ResourceProvider {
 		Schema: map[string]*schema.Schema{
 			"api_key": &schema.Schema{
 				Type:        schema.TypeString,
-				Required:    true,
+				Required:    false,
 				Description: "API key for HTTP call",
 				DefaultFunc: schema.EnvDefaultFunc("DME_API_KEY", nil),
 			},
 
 			"secret_key": &schema.Schema{
 				Type:        schema.TypeString,
-				Required:    true,
+				Required:    false,
 				Description: "Secret Key for HMAC",
 				DefaultFunc: schema.EnvDefaultFunc("DME_SECRET_KEY", nil),
 			},
