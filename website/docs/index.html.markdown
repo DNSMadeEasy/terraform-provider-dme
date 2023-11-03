@@ -49,7 +49,7 @@ Argument Reference
 ------------------
 Following arguments are supported with DNS Made Easy terraform provider.
 
- * `api_key` - (Required) API key of a user which has the access to perform CRUD operations on all the DNS objects of DNS Made Easy platform.
- * `secret_key` - (Required) Secret key of a user which has the access to perform CRUD operations on all the DNS objects of DNS Made Easy platform.
+ * `api_key` - (Optional) API key of a user which has the access to perform CRUD operations on all the DNS objects of DNS Made Easy platform. This can also be sourced from the `DME_API_KEY` Environment Variable.
+ * `secret_key` - (Optional) Secret key of a user which has the access to perform CRUD operations on all the DNS objects of DNS Made Easy platform. This can also be sourced from the `DME_SECRET_KEY`
  * `insecure` - (Optional) This determines whether to use insecure HTTP connection or not. Default value is `true`.  
  * `proxyurl` - (Optional) A proxy server URL when configured, all the requests to DNS Made Easy platform will be passed through the proxy-server configured.

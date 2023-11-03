@@ -5,7 +5,7 @@
 - [![Gitter chat](https://badges.gitter.im/hashicorp-terraform/Lobby.png)](https://gitter.im/hashicorp-terraform/Lobby)
 - Mailing list: [Google Groups](http://groups.google.com/group/terraform-tool)
 
-<img src="https://cdn.rawgit.com/hashicorp/terraform-website/master/content/source/assets/images/logo-hashicorp.svg" width="600px">
+![HashiCorp Terraform Logo](images/Terraform_PrimaryLogo_Color_RGB.svg)
 
 
 Requirements
@@ -59,6 +59,9 @@ resource "dme_domain" "example" {
 
 ```
 
+The `apikey` and `secretkey` can be sourced from the following Environment Variables:
+* `DME_API_KEY`
+* `DME_SECRET_KEY`
 
 ```
 terraform plan -parallelism=1
