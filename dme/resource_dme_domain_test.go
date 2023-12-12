@@ -12,6 +12,7 @@ import (
 )
 
 func TestAccDomain_Basic(t *testing.T) {
+	resourceName := "dme_domain.example"
 	var domain models.DomainAttribute
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -21,15 +22,21 @@ func TestAccDomain_Basic(t *testing.T) {
 			{
 				Config: testAccCheckDMEDomainConfig_basic("domain_test_basic1.com", "false"),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckDMEDomainExists("dme_domain.example", &domain),
+					testAccCheckDMEDomainExists(resourceName, &domain),
 					testAccCheckDMEDomainAttributes("domain_test_basic1.com", "false", &domain),
 				),
+			},
+			{
+				ResourceName:      resourceName,
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
 }
 
 func TestAccDMEDomain_Update(t *testing.T) {
+	resourceName := "dme_domain.example"
 	var domain models.DomainAttribute
 
 	resource.Test(t, resource.TestCase{
@@ -40,14 +47,14 @@ func TestAccDMEDomain_Update(t *testing.T) {
 			{
 				Config: testAccCheckDMEDomainConfig_basic("domain_test_update1.com", "false"),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckDMEDomainExists("dme_domain.example", &domain),
+					testAccCheckDMEDomainExists(resourceName, &domain),
 					testAccCheckDMEDomainAttributes("domain_test_update1.com", "false", &domain),
 				),
 			},
 			{
 				Config: testAccCheckDMEDomainConfig_basic("domain_test_update1.com", "true"),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckDMEDomainExists("dme_domain.example", &domain),
+					testAccCheckDMEDomainExists(resourceName, &domain),
 					testAccCheckDMEDomainAttributes("domain_test_update1.com", "true", &domain),
 				),
 			},
