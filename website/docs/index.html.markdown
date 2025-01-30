@@ -24,7 +24,8 @@ provider "dme" {
   # dme secret key
   secret_key = "secretkey"
   insecure  = true
-  proxyurl = "https://proxy_server:proxy_port"
+  proxy_url = "https://proxy_server:proxy_port"
+  base_url = "https://api.sandbox.dnsmadeeasy.com/V2.0/"
 }
  ```
 
@@ -37,7 +38,8 @@ provider "dme" {
   # dme secret key
   secret_key = "secretkey"
   insecure  = true
-  proxyurl = "https://proxy_server:proxy_port"
+  proxy_url = "https://proxy_server:proxy_port"
+  base_url = "https://api.sandbox.dnsmadeeasy.com/V2.0/"
 }
 
 resource "dme_domain" "domain1" {
@@ -52,4 +54,6 @@ Following arguments are supported with DNS Made Easy terraform provider.
  * `api_key` - (Required) API key of a user which has the access to perform CRUD operations on all the DNS objects of DNS Made Easy platform.
  * `secret_key` - (Required) Secret key of a user which has the access to perform CRUD operations on all the DNS objects of DNS Made Easy platform.
  * `insecure` - (Optional) This determines whether to use insecure HTTP connection or not. Default value is `true`.  
- * `proxyurl` - (Optional) A proxy server URL when configured, all the requests to DNS Made Easy platform will be passed through the proxy-server configured.
+ * `proxy_url` - (Optional) A proxy server URL when configured, all the requests to DNS Made Easy platform will be passed through the proxy-server configured.
+ * `proxyurl` - (Optional) Same as above but deprecated. Use `proxy_url` instead.
+ * `base_url` - (Optional) A custom api base URL instead of the default one. This option can also be used to test with sandbox API server.
