@@ -13,7 +13,7 @@ Requirements
 
 - [Terraform](https://www.terraform.io/downloads.html) Latest Version
 
-- [Go](https://golang.org/doc/install) go1.13.8
+- [Go](https://golang.org/doc/install) v1.23
 
 ## Building The Provider ##
 Clone this repository to: `$GOPATH/src/github.com/DNSMadeEasy/terraform-provider-dme`.
@@ -45,6 +45,7 @@ provider "dme" {
   secretkey = "secretkey"
   insecure = true
   proxy_url = "https://proxy_server:proxy_port"
+  base_url = "https://api.sandbox.dnsmadeeasy.com/V2.0"
 }
 
 resource "dme_domain" "example" {
