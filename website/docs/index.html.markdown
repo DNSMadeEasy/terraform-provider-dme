@@ -25,7 +25,7 @@ provider "dme" {
   secret_key = "secretkey"
   insecure  = true
   proxy_url = "https://proxy_server:proxy_port"
-  base_url = "https://api.sandbox.dnsmadeeasy.com/V2.0/"
+  base_url = "https://api.sandbox.dnsmadeeasy.com/V2.0"
 }
  ```
 
@@ -39,7 +39,7 @@ provider "dme" {
   secret_key = "secretkey"
   insecure  = true
   proxy_url = "https://proxy_server:proxy_port"
-  base_url = "https://api.sandbox.dnsmadeeasy.com/V2.0/"
+  base_url = "https://api.sandbox.dnsmadeeasy.com/V2.0"
 }
 
 resource "dme_domain" "domain1" {
