@@ -35,6 +35,19 @@ func Provider() terraform.ResourceProvider {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Proxy server URL",
+				Deprecated:  "Use proxy_url instead",
+			},
+
+			"proxy_url": &schema.Schema{
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Proxy server URL",
+			},
+
+			"base_url": &schema.Schema{
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "API base URL",
 			},
 		},
 
@@ -74,10 +87,11 @@ func Provider() terraform.ResourceProvider {
 
 func configureClient(d *schema.ResourceData) (interface{}, error) {
 	config := config{
-		api_key:    d.Get("api_key").(string),
-		secret_key: d.Get("secret_key").(string),
-		insecure:   d.Get("insecure").(bool),
-		proxyurl:   d.Get("proxyurl").(string),
+		apiKey:    d.Get("api_key").(string),
+		secretKey: d.Get("secret_key").(string),
+		insecure:  d.Get("insecure").(bool),
+		proxyURL:  getProxyURL(d),
+		baseURL:   d.Get("base_url").(string),
 	}
 
 	if err := config.Valid(); err != nil {
@@ -87,26 +101,40 @@ func configureClient(d *schema.ResourceData) (interface{}, error) {
 	return cli, nil
 }
 
-func (c config) Valid() error {
+func getProxyURL(d *schema.ResourceData) string {
+	// First try with `proxy_url`.
+	if v, ok := d.Get("proxy_url").(string); ok {
+		return v
+	}
+	// Otherwise, try deprecated `proxyurl`
+	return d.Get("proxyurl").(string)
+}
 
-	if c.api_key == "" {
+func (c config) Valid() error {
+	if c.apiKey == "" {
 		return fmt.Errorf("API Key is required")
 	}
 
-	if c.secret_key == "" {
+	if c.secretKey == "" {
 		return fmt.Errorf("secret key is required")
 	}
 	return nil
 }
 
 func (c config) getClient() interface{} {
-
-	return client.GetClient(c.api_key, c.secret_key)
+	return client.GetClient(
+		c.apiKey,
+		c.secretKey,
+		client.Insecure(c.insecure),
+		client.ProxyURL(c.proxyURL),
+		client.BaseURL(c.baseURL),
+	)
 }
 
 type config struct {
-	api_key    string
-	secret_key string
-	insecure   bool
-	proxyurl   string
+	apiKey    string
+	secretKey string
+	insecure  bool
+	proxyURL  string
+	baseURL   string
 }
