@@ -13,6 +13,7 @@ import (
 	"net/http/httputil"
 	"net/url"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -24,7 +25,7 @@ import (
 
 var mutex sync.Mutex
 
-const baseURL = "https://api.dnsmadeeasy.com/V2.0"
+const defaultBaseURL = "https://api.dnsmadeeasy.com/V2.0"
 const sleepDuration = 5
 
 type Client struct {
@@ -56,7 +57,7 @@ func ProxyURL(proxyURL string) Option {
 
 func BaseURL(baseURL string) Option {
 	return func(client *Client) {
-		client.baseURL = baseURL
+		client.baseURL = strings.TrimRight(baseURL, "/")
 	}
 }
 
@@ -80,7 +81,7 @@ func initClient(apiKey, secretKey string, options ...Option) *Client {
 		Transport: transport,
 	}
 	if client.baseURL == "" {
-		client.baseURL = baseURL
+		client.baseURL = defaultBaseURL
 	}
 	return client
 }
@@ -92,6 +93,10 @@ func GetClient(apiKey, secretKey string, options ...Option) *Client {
 	}
 	clientImpl = initClient(apiKey, secretKey, options...)
 	return clientImpl
+}
+
+func resetClient() {
+	clientImpl = nil
 }
 
 func (c *Client) toAPIEndpoint(endpoint string) string {
@@ -147,7 +152,7 @@ func (c *Client) Save(obj models.Model, endpoint string) (*container.Container, 
 	if err != nil {
 		return nil, err
 	}
-	log.Println("Respons body is :", respObj)
+	log.Println("Response body is :", respObj)
 
 	respErr := checkForErrors(resp, respObj)
 	if respErr != nil {
@@ -230,7 +235,7 @@ func (c *Client) Delete(endpoint string) error {
 	if err != nil {
 		return err
 	}
-	log.Println("Respons body is :", respObj)
+	log.Println("Response body is :", respObj)
 
 	respErr := checkForErrors(resp, respObj)
 	if respErr != nil {
@@ -243,6 +248,8 @@ func checkForErrors(resp *http.Response, obj *container.Container) error {
 	if resp.StatusCode != 200 && resp.StatusCode != 201 {
 		log.Println(" Into the check for errors ")
 		if resp.StatusCode == 404 {
+			// Not fixing capitalization issue on next line,
+			// as it might break some upstream code.
 			return fmt.Errorf("Particular item not found")
 		}
 

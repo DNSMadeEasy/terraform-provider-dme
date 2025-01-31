@@ -3,7 +3,7 @@ module github.com/terraform-providers/terraform-provider-dme
 go 1.23
 
 require (
-	github.com/DNSMadeEasy/dme-go-client v1.11.4
+	github.com/DNSMadeEasy/dme-go-client v1.11.5
 	github.com/hashicorp/terraform-plugin-sdk v1.14.0
 )
 
