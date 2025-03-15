@@ -19,6 +19,9 @@ func resourceManagedDNSRecordActions() *schema.Resource {
 		Update: resourceManagedDNSRecordActionsUpdate,
 		Read:   resourceManagedDNSRecordActionsRead,
 		Delete: resourceManagedDNSRecordActionsDelete,
+		Importer: &schema.ResourceImporter{
+			State: resourceMangagedDNSRecordActionsImport,
+		},
 
 		Schema: map[string]*schema.Schema{
 			"domain_id": &schema.Schema{
@@ -270,6 +273,7 @@ func resourceManagedDNSRecordActionsRead(d *schema.ResourceData, m interface{}) 
 	}
 
 	cont1 := con.S("data").Index(count)
+	log.Println("cont1: ", cont1)
 
 	d.SetId(fmt.Sprintf("%v", cont1.S("id").String()))
 
@@ -404,5 +408,112 @@ func resourceManagedDNSRecordActionsDelete(d *schema.ResourceData, m interface{}
 	}
 
 	d.SetId("")
+	return nil
+}
+
+func resourceMangagedDNSRecordActionsImport(d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
+	importID := d.Id()
+	log.Printf("Inside Record Import, looking up '%s'\n", importID)
+	strParts := strings.Split(importID, ":")
+
+	if len(strParts) != 3 {
+		return []*schema.ResourceData{d}, fmt.Errorf("Import requires a 3-part ID, separated by ':'. zone:record:record-type, eg: example.com:@:a, or example.com:www:a, example.com:@:mx, example.com:www:cname, etc")
+	}
+
+	zoneName := strParts[0]
+	log.Printf("Inside Record Import: reading domain '%s'\n", zoneName)
+	importDomainResource := resourceDMEDomain()
+	importDomain := importDomainResource.Data(nil)
+	importDomain.SetType("dme_domain")
+	importDomain.Set("name", zoneName)
+
+	var err error
+
+	log.Printf("Inside Record Import: Looking up domain '%s'\n", strParts[0])
+	if err = datasourceDMEDomainRead(importDomain, m); err == nil {
+		d.SetType("dme_dns_record")
+		d.SetId("")
+		d.Set("domain_id", importDomain.Id())
+		d.Set("type", strings.ToUpper(strParts[2]))
+
+		hostName := strParts[1]
+		hostName = strings.Replace(hostName, "@", "", -1)
+		d.Set("name", strParts[1])
+
+		log.Printf("Inside Record Import: Found Domain, looking up Record '%s', type '%s' (domain ID: '%s')\n", strParts[1], strParts[2], importDomain.Id())
+
+		findDNSRecord(d, m)
+
+		log.Printf("Inside Record Import: Finished lookup, current DNS value: '%s'\n", d.Get("value"))
+	} else {
+		err = fmt.Errorf("Domain '%s' not found in DME account", strParts[0])
+	}
+
+	return []*schema.ResourceData{d}, err
+}
+
+func findDNSRecord(d *schema.ResourceData, m interface{}) error {
+	dmeClient := m.(*client.Client)
+	lookupName := d.Get("name").(string)
+	lookupType := d.Get("type").(string)
+
+	log.Printf("Inside Record Lookup: Finding by Name '%s' and Type '%s'\n", lookupName, lookupType)
+
+	con, err := dmeClient.GetbyId("dns/managed/" + d.Get("domain_id").(string) + "/records?recordName=" + lookupName + "&type=" + lookupType)
+	if err != nil {
+		return err
+	}
+
+	data := con.S("data").Data().([]interface{})
+	var count int
+	log.Println("data: ", data)
+
+	for _, info := range data {
+		val := info.(map[string]interface{})
+		recordName := val["name"]
+		recordType := val["type"]
+
+		if recordName == lookupName && recordType == lookupType {
+			break
+		}
+
+		count = count + 1
+	}
+
+	cont1 := con.S("data").Index(count)
+	log.Println("cont1: ", cont1)
+
+	d.SetId(fmt.Sprintf("%v", cont1.S("id").String()))
+
+	log.Println("INSIDE READ ID value: ", cont1.S("id").String())
+	d.Set("name", StripQuotes(cont1.S("name").String()))
+	log.Println("Inside read ID name value: ", StripQuotes(cont1.S("name").String()))
+
+	str := StripQuotes(cont1.S("value").String())
+
+	if d.Get("type").(string) == "TXT" || d.Get("type").(string) == "SPF" || d.Get("type").(string) == "CAA" {
+		str = str[2 : len(str)-2]
+	}
+	log.Println("After trim: ", str)
+
+	d.Set("value", str)
+
+	d.Set("type", StripQuotes(cont1.S("type").String()))
+	d.Set("dynamic_dns", StripQuotes(cont1.S("dynamicDns").String()))
+	d.Set("password", StripQuotes(cont1.S("password").String()))
+	d.Set("ttl", StripQuotes(cont1.S("ttl").String()))
+	d.Set("gtd_location", StripQuotes(cont1.S("gtdLocation").String()))
+	d.Set("description", StripQuotes(cont1.S("description").String()))
+	d.Set("keywords", StripQuotes(cont1.S("keywords").String()))
+	d.Set("title", StripQuotes(cont1.S("title").String()))
+	d.Set("redirect_type", StripQuotes(cont1.S("redirectType").String()))
+	d.Set("hardlink", StripQuotes(cont1.S("hardLink").String()))
+	d.Set("mx_level", StripQuotes(cont1.S("mxLevel").String()))
+	d.Set("weight", StripQuotes(cont1.S("weight").String()))
+	d.Set("port", StripQuotes(cont1.S("port").String()))
+	d.Set("priority", StripQuotes(cont1.S("priority").String()))
+	d.Set("caa_type", StripQuotes(cont1.S("caaType").String()))
+	d.Set("issuer_critical", StripQuotes(cont1.S("issuerCritical").String()))
+
 	return nil
 }
