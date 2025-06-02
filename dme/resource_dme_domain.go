@@ -27,31 +27,32 @@ func resourceDMEDomain() *schema.Resource {
 			"gtd_enabled": &schema.Schema{
 				Type:     schema.TypeString,
 				Optional: true,
-				Computed: true,
+				Computed: false,
+				Default:  "false",
 			},
 
 			"soa_id": &schema.Schema{
 				Type:     schema.TypeString,
 				Optional: true,
-				Computed: true,
+				Computed: false,
 			},
 
 			"template_id": &schema.Schema{
 				Type:     schema.TypeString,
 				Optional: true,
-				Computed: true,
+				Computed: false,
 			},
 
 			"vanity_id": &schema.Schema{
 				Type:     schema.TypeString,
 				Optional: true,
-				Computed: true,
+				Computed: false,
 			},
 
 			"transfer_acl_id": &schema.Schema{
 				Type:     schema.TypeString,
 				Optional: true,
-				Computed: true,
+				Computed: false,
 			},
 
 			"folder_id": &schema.Schema{
@@ -129,25 +130,11 @@ func resourceDMEDomainUpdate(d *schema.ResourceData, m interface{}) error {
 	dmeClient := m.(*client.Client)
 	domainAttr := &models.DomainAttribute{}
 
-	if d.HasChange("gtd_enabled") {
-		domainAttr.GtdEnabled = d.Get("gtd_enabled").(string)
-	}
-
-	if d.HasChange("soa_id") {
-		domainAttr.SOAID = d.Get("soa_id").(string)
-	}
-
-	if d.HasChange("template_id") {
-		domainAttr.TemplateID = d.Get("template_id").(string)
-	}
-
-	if d.HasChange("vanity_id") {
-		domainAttr.VanityID = d.Get("vanity_id").(string)
-	}
-
-	if d.HasChange("transfer_acl_id") {
-		domainAttr.TransferAClID = d.Get("transfer_acl_id").(string)
-	}
+	domainAttr.GtdEnabled = d.Get("gtd_enabled").(string)
+	domainAttr.SOAID = d.Get("soa_id").(string)
+	domainAttr.TemplateID = d.Get("template_id").(string)
+	domainAttr.VanityID = d.Get("vanity_id").(string)
+	domainAttr.TransferAClID = d.Get("transfer_acl_id").(string)
 
 	if d.HasChange("folder_id") {
 		domainAttr.FolderID = d.Get("folder_id").(string)
