@@ -28,12 +28,12 @@ It takes around 10 minutes to reflect the changes on the DNS Made Easy platform.
 
 ## Argument Reference ##
 * `name` - (Required) Name of domain action. Name should be unique.
-* `gtd_enabled` - (Optional) Indicator of whether or not this domain uses the Global Traffic Director service.
-* `soa_id` - (Optional) The ID of a custom SOA record.
-* `template_id` - (Optional) The ID of a template applied to the domain.
-* `vanity_id` - (Optional) The ID of a vanity DNS configuration.
-* `transfer_acl_id` - (Optional) The ID of an applied transfer ACL.
-* `folder_id` - (Optional) The ID of a domain folder.
+* `gtd_enabled` - (Optional) Indicator of whether or not this domain uses the Global Traffic Director service. Default value is `false`.
+* `soa_id` - (Optional) The ID of a custom SOA record. If unused, it does not use any custom SOA record for the domain.
+* `template_id` - (Optional) The ID of a template applied to the domain. If unused, it does not use any template for the domain.
+* `vanity_id` - (Optional) The ID of a vanity DNS configuration. If unused, it does not use any vanity nameservers for the domain.
+* `transfer_acl_id` - (Optional) The ID of an applied transfer ACL. If unused, it does not use any transfer acl for the domain.
+* `folder_id` - (Optional) The ID of a domain folder. If unused, it uses the system created `Default Folder`.
 
 ## Attribute Reference ##
 * `updated` - The number of seconds since the domain
