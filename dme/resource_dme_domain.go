@@ -16,6 +16,9 @@ func resourceDMEDomain() *schema.Resource {
 		Read:   resourceDMEDomainRead,
 		Update: resourceDMEDomainUpdate,
 		Delete: resourceDMEDomainDelete,
+		Importer: &schema.ResourceImporter{
+			State: resourceDMEDomainImport,
+		},
 
 		Schema: map[string]*schema.Schema{
 			"name": &schema.Schema{
@@ -191,4 +194,13 @@ func resourceDMEDomainDelete(d *schema.ResourceData, m interface{}) error {
 
 	d.SetId("")
 	return nil
+}
+
+func resourceDMEDomainImport(d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
+	err := resourceDMEDomainRead(d, m)
+	if err != nil {
+		return nil, err
+	}
+
+	return []*schema.ResourceData{d}, nil
 }

@@ -41,3 +41,13 @@ was last updated in Epoch time. Not configurable by the user.
 * `created` - The number of seconds since the domain
 was last created in Epoch time. Not configurable by the user.
 * `id` - Set to the dme calculated id of domain action.
+
+## Import
+
+Domain can be imported using the `id`, e.g.
+
+```bash
+$ terraform import dme_domain.example_com 7955579
+```
+
+You can copy `id` from domain index page URL, e.g. https://cp.dnsmadeeasy.com/dns/managed/7955579.
