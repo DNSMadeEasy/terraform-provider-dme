@@ -1,6 +1,7 @@
 package dme
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"strings"
@@ -25,9 +26,16 @@ func resourceManagedDNSRecordActions() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
+			"init_value": &schema.Schema{
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Initial value used for creation when value is not specified. Useful for dynamic_dns or when records are updated outside Terraform",
+			},
 			"value": &schema.Schema{
-				Type:     schema.TypeString,
-				Required: true,
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
+				Description: "Value for the record. If not set init_value must be set",
 			},
 			"type": &schema.Schema{
 				Type:     schema.TypeString,
@@ -158,6 +166,11 @@ func resourceManagedDNSRecordActionsCreate(d *schema.ResourceData, m interface{}
 
 	if value, ok := d.GetOk("value"); ok {
 		recordAttr.Value = value.(string)
+	} else if init_value, ok := d.GetOk("init_value"); ok {
+		recordAttr.Value = init_value.(string)
+		d.Set("value", init_value)
+	} else {
+		return errors.New("at least value or init_value must be set")
 	}
 
 	if Type, ok := d.GetOk("type"); ok {
