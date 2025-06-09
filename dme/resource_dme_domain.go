@@ -161,7 +161,7 @@ func resourceDMEDomainRead(d *schema.ResourceData, m interface{}) error {
 	dmeClient := m.(*client.Client)
 	dn := d.Id()
 
-	con, err := dmeClient.GetbyId("dns/managed/" + dn)
+	con, err := domainCache.getByDomain(dmeClient, dn)
 	if err != nil {
 		return err
 	}
