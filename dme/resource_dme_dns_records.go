@@ -142,6 +142,12 @@ func resourceManagedDNSRecordActions() *schema.Resource {
 				Optional: true,
 				Computed: true,
 			},
+
+			"allow_overwrite": &schema.Schema{
+				Type:     schema.TypeBool,
+				Optional: true,
+				Computed: true,
+			},
 		},
 	}
 }
@@ -227,8 +233,17 @@ func resourceManagedDNSRecordActionsCreate(d *schema.ResourceData, m interface{}
 	cont, err := dmeClient.Save(&recordAttr, "dns/managed/"+d.Get("domain_id").(string)+"/records/")
 
 	if err != nil {
-		log.Println("Error returned: ", err)
-		return err
+		if strings.Contains(err.Error(), "already exists") && d.Get("allow_overwrite").(bool) {
+			log.Printf("[DEBUG] DNS Record already exists however we are overwriting it")
+			cont, err = dmeClient.Update(&recordAttr, "dns/managed/"+d.Get("domain_id").(string)+"/records/")
+			if err != nil {
+				log.Println("Error returned: ", err)
+				return err
+			}
+		} else {
+			log.Println("Error returned: ", err)
+			return err
+		}
 	}
 
 	log.Println("Value of container: ", cont)
