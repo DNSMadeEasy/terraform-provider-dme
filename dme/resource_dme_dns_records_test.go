@@ -13,6 +13,7 @@ import (
 
 func TestAccDomainRecords_Basic(t *testing.T) {
 	var record models.ManagedDNSRecordActions
+	dnsRecordTest := "dme_dns_record.a1"
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
@@ -21,9 +22,19 @@ func TestAccDomainRecords_Basic(t *testing.T) {
 			{
 				Config: testAccCheckDMERecordConfig_basic("86400"),
 				Check: resource.ComposeTestCheckFunc(
-					testAccCheckDMERecordExists("dme_domain.domain1", "dme_dns_record.a1", &record),
+					testAccCheckDMERecordExists("dme_domain.domain1", dnsRecordTest, &record),
 					testAccCheckDMERecordAttributes("86400", &record),
 				),
+			},
+			{
+				ResourceName:      dnsRecordTest,
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+			{
+				ResourceName:      "dme_dns_record.HTTPREDrecord",
+				ImportState:       true,
+				ImportStateVerify: true,
 			},
 		},
 	})
@@ -67,6 +78,18 @@ func testAccCheckDMERecordConfig_basic(ttl string) string {
 		ttl = "%s"
 		type = "A"
 		value = "1.2.3.4"
+	}
+	resource "dme_dns_record" "HTTPREDrecord" {
+		domain_id     = "${dme_domain.example.id}"
+		name          = "practice"
+		type          = "HTTPRED"
+		ttl           = "86402"
+		value         = "http://www.facebook.com"
+		description   = "First http record"
+		keywords      = "practice record"
+		title         = "record"
+		redirect_type = "Standard - 302"
+		hardlink      = "true"
 	}
 	`, ttl)
 }

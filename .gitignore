@@ -33,3 +33,5 @@ website/vendor
 .idea
 *.sh
 test/*
+
+secrets.auto.tfvars

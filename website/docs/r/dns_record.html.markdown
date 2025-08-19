@@ -7,9 +7,11 @@ description: |-
 ---
 
 # dme_dns_record #
+
 Manages one or more records in a domain within the account.
 
 # Example Usage #
+
 ```hcl
 resource "dme_dns_record" "record" {
   domain_id     = "${dme_domain.example.id}"
@@ -27,21 +29,35 @@ resource "dme_dns_record" "record" {
 ```
 
 ## Argument Reference ##
+
 * `name` - (Required) Name of record.
-* `value` - (Required) Value of record.
-  For A record Ipv4 address is required. For example: value: "1.2.3.4"
-  For CNAME record alias name is required. For example: value: "www"
-  For ANAME record FQDN is required. For example: value: "www.google.com."
-  For MX record server name is required. For example: value: "document."
-  For HTTPRED record URL is required. For example: value: "http://www.google.com"
-  For TXT record text data is required. For example: value: "practice"
-  For SPF record string value is required. For example: value: "1.2.3.4"
-  For PTR record host name is required. For example: value: "mail.domainDocument."
-  For NS record host name is required. For example: value: "mail.domainDocument." 
-  For AAAA record IPv6 address is required. For example: value: "0::0:0:0:0:0:6"
-  For SRV record host name is required. For example: value: "mail.domainDocument."
-  For CAA record text data is required. For example: value: "comodoca.com"
-* `type` - (Required) The record type. Values: A, AAAA, ANAME, CNAME, HTTPRED, MX, NS, PTR, SRV, TXT, CAA or SPF.
+* `domain_id` - (Required) The DME Domain Id the record should be created under.
+* `value` - (Required) Value of the record.
+  For `A` record Ipv4 address is required. For example: value: "1.2.3.4"
+  
+  For `CNAME` record alias name is required. For example: value: "www"
+  
+  For `ANAME` record FQDN is required. For example: value: "www.google.com."
+  
+  For `MX` record server name is required. For example: value: "document."
+  
+  For `HTTPRED` record URL is required. For example: value: "http://www.google.com"
+  
+  For `TXT` record text data is required. For example: value: "practice"
+  
+  For `SPF` record string value is required. For example: value: "1.2.3.4"
+  
+  For `PTR` record host name is required. For example: value: "mail.domainDocument."
+  
+  For `NS` record host name is required. For example: value: "mail.domainDocument." 
+  
+  For `AAAA` record IPv6 address is required. For example: value: "0::0:0:0:0:0:6"
+  
+  For `SRV` record host name is required. For example: value: "mail.domainDocument."
+  
+  For `CAA` record text data is required. For example: value: "comodoca.com"
+  
+* `type` - (Required) The record type. Possible Values: `A`, `AAAA`, `ANAME`, `CNAME`, `HTTPRED`, `MX`, `NS`, `PTR`, `SRV`, `TXT`, `CAA` or `SPF`.
 * `ttl` - (Required) The time to live or TTL of the record.
 * `gtd_location` - (Optional) Global Traffic Director location. Values:DEFAULT, US_EAST, US_WEST, EUROPE, ASIA_PAC, OCREANIA.
 * `dynamic_dns` - (Optional) Indicates if the record has dynamic DNS enabled or not.
@@ -56,7 +72,12 @@ resource "dme_dns_record" "record" {
 * `priority` - (Optional) The priority for an SRV Record. Priority is required for creating SRV record.
 * `port` - (Optional) The port for an SRV Record. Port is required for creating SRV record.
 * `caa_type` - (Optional) The type for an CAA Record. Caatype is required for creating CAA record. Caa type can be "issue", "issuewild", "iodef"
-* `issuer_critical` - (Optional) The issuer critical value for an CAA Record. It is required for creating CAA record. Value will be integer less than or equla to 255.
+* `issuer_critical` - (Optional) The issuer critical value for an CAA Record. It is required for creating CAA record. Value will be integer less than or equal to 255.
 
-## Attribute Reference ##
-The only attribute that this resource exports is the `domain_id`, which is set to the dme calculated id of the resource.
+## Import
+
+The Dns Record can be imported using the domain_id and the dns record's id:
+
+```
+terraform import dme_dns_record.example domain_id:dns_record_id
+```

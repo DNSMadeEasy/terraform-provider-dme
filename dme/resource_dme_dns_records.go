@@ -9,8 +9,6 @@ import (
 	"github.com/DNSMadeEasy/dme-go-client/models"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	// "github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	// "github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
 func resourceManagedDNSRecordActions() *schema.Resource {
@@ -19,6 +17,9 @@ func resourceManagedDNSRecordActions() *schema.Resource {
 		Update: resourceManagedDNSRecordActionsUpdate,
 		Read:   resourceManagedDNSRecordActionsRead,
 		Delete: resourceManagedDNSRecordActionsDelete,
+		Importer: &schema.ResourceImporter{
+			State: resourceManagedDNSRecordActionsImport,
+		},
 
 		Schema: map[string]*schema.Schema{
 			"domain_id": &schema.Schema{
@@ -38,7 +39,6 @@ func resourceManagedDNSRecordActions() *schema.Resource {
 				Required: true,
 				ForceNew: true,
 			},
-
 			"dynamic_dns": &schema.Schema{
 				Type:     schema.TypeString,
 				Optional: true,
@@ -152,9 +152,11 @@ func resourceManagedDNSRecordActionsCreate(d *schema.ResourceData, m interface{}
 	recordAttr := models.ManagedDNSRecordActions{}
 
 	recordAttr.Name = d.Get("name").(string)
-	// if name, ok := d.GetOk("name"); ok {
-	// 	recordAttr.Name = name.(string)
-	// }
+
+	// Fix the domain_id check
+	if d.Get("domain_id").(string) == "" {
+		return fmt.Errorf("domain_id is required but not provided")
+	}
 
 	if value, ok := d.GetOk("value"); ok {
 		recordAttr.Value = value.(string)
@@ -224,7 +226,7 @@ func resourceManagedDNSRecordActionsCreate(d *schema.ResourceData, m interface{}
 	}
 	log.Println("Value of recordAttr: ", &recordAttr)
 
-	cont, err := dmeClient.Save(&recordAttr, "dns/managed/"+d.Get("domain_id").(string)+"/records/")
+	cont, err := dmeClient.Save(&recordAttr, "dns/managed/"+d.Get("domain_id").(string)+"/records")
 
 	if err != nil {
 		log.Println("Error returned: ", err)
@@ -405,4 +407,58 @@ func resourceManagedDNSRecordActionsDelete(d *schema.ResourceData, m interface{}
 
 	d.SetId("")
 	return nil
+}
+
+func resourceManagedDNSRecordActionsParseId(id string) (string, string, error) {
+	parts := strings.SplitN(id, ":", 2)
+
+	if len(parts) != 2 || parts[0] == "" || parts[1] == "" {
+		return "", "", fmt.Errorf("unexpected format of import (%s), expected domain_id:dns_record_id", id)
+	}
+
+	return parts[0], parts[1], nil
+}
+
+func resourceManagedDNSRecordActionsImport(d *schema.ResourceData, m interface{}) ([]*schema.ResourceData, error) {
+	dmeClient := m.(*client.Client)
+
+	// d.Set("domain_id", domain_id)
+	log.Println("Value of domain_id: ", d.Get("domain_id"))
+	// pass in domain_id/id
+	domain_id, id, err := resourceManagedDNSRecordActionsParseId(d.Id())
+	if err != nil {
+		return nil, err
+	}
+	d.Set("domain_id", domain_id)
+	d.SetId(id)
+	// this returns all records, unable to get a single record by id...
+	con, err := dmeClient.GetbyId("dns/managed/" + domain_id + "/records")
+	if err != nil {
+		return nil, err
+	}
+	log.Println("dmeclient get: ", con)
+	data := con.S("data").Data().([]interface{})
+	var foundRecord map[string]interface{}
+	// loop through the results.
+	for _, info := range data {
+		record := info.(map[string]interface{})
+		recordID := fmt.Sprintf("%.0f", record["id"]) // Convert float to string without decimal
+		log.Println("Checking record ID: ", recordID, " against target ID: ", id)
+		if recordID == id {
+			foundRecord = record
+			log.Println("Found matching record: ", foundRecord)
+			break
+		}
+	}
+	if foundRecord == nil {
+		return nil, fmt.Errorf("record with ID %s not found in domain %s", id, domain_id)
+	}
+	// these types are needed by the Read call...
+	d.Set("name", foundRecord["name"].(string))
+	d.Set("type", foundRecord["type"].(string))
+	err = resourceManagedDNSRecordActionsRead(d, m)
+	if err != nil {
+		return nil, err
+	}
+	return []*schema.ResourceData{d}, nil
 }
